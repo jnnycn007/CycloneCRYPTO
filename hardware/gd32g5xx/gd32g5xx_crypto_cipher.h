@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto_trng.h
- * @brief PIC32CZ true random number generator
+ * @file gd32g5xx_crypto_cipher.h
+ * @brief GD32G5 cipher hardware accelerator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,20 +25,20 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
-#ifndef _PIC32CZ_CRYPTO_TRNG_H
-#define _PIC32CZ_CRYPTO_TRNG_H
+#ifndef _GD32G5XX_CRYPTO_CIPHER_H
+#define _GD32G5XX_CRYPTO_CIPHER_H
 
 //Dependencies
 #include "core/crypto.h"
 
-//True random number generator
-#ifndef PIC32CZ_CRYPTO_TRNG_SUPPORT
-   #define PIC32CZ_CRYPTO_TRNG_SUPPORT ENABLED
-#elif (PIC32CZ_CRYPTO_TRNG_SUPPORT != ENABLED && PIC32CZ_CRYPTO_TRNG_SUPPORT != DISABLED)
-   #error PIC32CZ_CRYPTO_TRNG_SUPPORT parameter is not valid
+//Cipher hardware accelerator
+#ifndef GD32G5XX_CRYPTO_CIPHER_SUPPORT
+   #define GD32G5XX_CRYPTO_CIPHER_SUPPORT DISABLED
+#elif (GD32G5XX_CRYPTO_CIPHER_SUPPORT != ENABLED && GD32G5XX_CRYPTO_CIPHER_SUPPORT != DISABLED)
+   #error GD32G5XX_CRYPTO_CIPHER_SUPPORT parameter is not valid
 #endif
 
 //C++ guard
@@ -46,9 +46,8 @@
 extern "C" {
 #endif
 
-//TRNG related functions
-error_t trngInit(void);
-error_t trngGetRandomData(uint8_t *data, size_t length);
+//Cipher related functions
+error_t cauInit(void);
 
 //C++ guard
 #ifdef __cplusplus

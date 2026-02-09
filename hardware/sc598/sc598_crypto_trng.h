@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto_cipher.h
- * @brief PIC32CZ cipher hardware accelerator
+ * @file sc598_crypto_trng.h
+ * @brief ADSP-SC598 true random number generator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,26 +25,30 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
-#ifndef _PIC32CZ_CRYPTO_CIPHER_H
-#define _PIC32CZ_CRYPTO_CIPHER_H
+#ifndef _SC598_CRYPTO_TRNG_H
+#define _SC598_CRYPTO_TRNG_H
 
 //Dependencies
 #include "core/crypto.h"
 
-//Cipher hardware accelerator
-#ifndef PIC32CZ_CRYPTO_CIPHER_SUPPORT
-   #define PIC32CZ_CRYPTO_CIPHER_SUPPORT DISABLED
-#elif (PIC32CZ_CRYPTO_CIPHER_SUPPORT != ENABLED && PIC32CZ_CRYPTO_CIPHER_SUPPORT != DISABLED)
-   #error PIC32CZ_CRYPTO_CIPHER_SUPPORT parameter is not valid
+//True random number generator
+#ifndef SC598_CRYPTO_TRNG_SUPPORT
+   #define SC598_CRYPTO_TRNG_SUPPORT ENABLED
+#elif (SC598_CRYPTO_TRNG_SUPPORT != ENABLED && SC598_CRYPTO_TRNG_SUPPORT != DISABLED)
+   #error SC598_CRYPTO_TRNG_SUPPORT parameter is not valid
 #endif
 
 //C++ guard
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+//TRNG related functions
+error_t trngInit(void);
+error_t trngGetRandomData(uint8_t *data, size_t length);
 
 //C++ guard
 #ifdef __cplusplus

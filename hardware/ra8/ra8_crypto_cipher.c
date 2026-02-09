@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
@@ -64,31 +64,34 @@ error_t aesProcessData(AesContext *context, uint8_t *iv, const uint8_t *input,
    fsp_err_t status;
    size_t n;
    uint32_t keyType;
+   uint32_t dummy;
    uint32_t block[AES_BLOCK_SIZE / 4];
 
    //Set key type
    keyType = 0;
    //Set operation mode
    command = htobe32(command);
+   //Dummy parameter
+   dummy = 0;
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Initialize encryption or decryption operation
    if(context->nr == 10)
    {
       status = HW_SCE_Aes128EncryptDecryptInitSub(&keyType, &command,
-         context->ek, (const uint32_t *) iv);
+         context->ek, &dummy, (const uint32_t *) iv);
    }
    else if(context->nr == 12)
    {
-      status = HW_SCE_Aes192EncryptDecryptInitSub(&command,
-         context->ek, (const uint32_t *) iv);
+      status = HW_SCE_Aes192EncryptDecryptInitSub(&keyType, &command,
+         context->ek, &dummy, (const uint32_t *) iv);
    }
    else if(context->nr == 14)
    {
       status = HW_SCE_Aes256EncryptDecryptInitSub(&keyType, &command,
-         context->ek, (const uint32_t *) iv);
+         context->ek, &dummy, (const uint32_t *) iv);
    }
    else
    {
@@ -175,7 +178,7 @@ error_t aesProcessData(AesContext *context, uint8_t *iv, const uint8_t *input,
       osMemset(output, 0, length);
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -199,7 +202,7 @@ error_t aesInit(AesContext *context, const uint8_t *key, size_t keyLen)
    if(context == NULL || key == NULL)
       return ERROR_INVALID_PARAMETER;
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Check the length of the key
@@ -236,7 +239,7 @@ error_t aesInit(AesContext *context, const uint8_t *key, size_t keyLen)
       status = FSP_ERR_CRYPTO_NOT_IMPLEMENTED;
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -697,7 +700,7 @@ error_t gcmInit(GcmContext *context, const CipherAlgo *cipherAlgo,
    if(context == NULL || cipherContext == NULL)
       return ERROR_INVALID_PARAMETER;
 
-   //The RSIP7 module only supports AES cipher algorithm
+   //The RSIP module only supports AES cipher algorithm
    if(cipherAlgo != AES_CIPHER_ALGO)
       return ERROR_INVALID_PARAMETER;
 
@@ -767,22 +770,24 @@ error_t gcmEncrypt(GcmContext *context, const uint8_t *iv,
    temp[2] = LOAD32LE(iv + 8);
    temp[3] = BETOH32(1);
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Initialize GCM encryption
    if(aesContext->nr == 10)
    {
-      status = HW_SCE_Aes128GcmEncryptInitSub(&keyType, &dummy, &dummy,
-         aesContext->ek, temp, &dummy);
+      status = HW_SCE_Aes128GcmEncryptInitSub(&keyType, aesContext->ek, &dummy,
+         temp);
    }
    else if(aesContext->nr == 12)
    {
-      status = HW_SCE_Aes192GcmEncryptInitSub(aesContext->ek, temp);
+      status = HW_SCE_Aes192GcmEncryptInitSub(&keyType, aesContext->ek, &dummy,
+         temp);
    }
    else if(aesContext->nr == 14)
    {
-      status = HW_SCE_Aes256GcmEncryptInitSub(&keyType, aesContext->ek, temp);
+      status = HW_SCE_Aes256GcmEncryptInitSub(&keyType, aesContext->ek, &dummy,
+         temp);
    }
    else
    {
@@ -934,7 +939,7 @@ error_t gcmEncrypt(GcmContext *context, const uint8_t *iv,
       osMemcpy(t, authTag, tLen);
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -999,22 +1004,24 @@ error_t gcmDecrypt(GcmContext *context, const uint8_t *iv,
    temp[2] = LOAD32LE(iv + 8);
    temp[3] = BETOH32(1);
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Initialize GCM decryption
    if(aesContext->nr == 10)
    {
-      status = HW_SCE_Aes128GcmDecryptInitSub(&keyType, &dummy, &dummy,
-         aesContext->ek, temp, &dummy);
+      status = HW_SCE_Aes128GcmDecryptInitSub(&keyType, aesContext->ek, &dummy,
+         temp);
    }
    else if(aesContext->nr == 12)
    {
-      status = HW_SCE_Aes192GcmDecryptInitSub(aesContext->ek, temp);
+      status = HW_SCE_Aes192GcmDecryptInitSub(&keyType, aesContext->ek, &dummy,
+         temp);
    }
    else if(aesContext->nr == 14)
    {
-      status = HW_SCE_Aes256GcmDecryptInitSub(&keyType, aesContext->ek, temp);
+      status = HW_SCE_Aes256GcmDecryptInitSub(&keyType, aesContext->ek, &dummy,
+         temp);
    }
    else
    {
@@ -1171,7 +1178,7 @@ error_t gcmDecrypt(GcmContext *context, const uint8_t *iv,
       osMemcpy(p + i, block, length - i);
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -1215,7 +1222,7 @@ error_t ccmEncrypt(const CipherAlgo *cipher, void *context, const uint8_t *n,
    uint8_t header[64];
    AesContext *aesContext;
 
-   //The RSIP7 module only supports AES cipher algorithm
+   //The RSIP module only supports AES cipher algorithm
    if(cipher != AES_CIPHER_ALGO)
       return ERROR_INVALID_PARAMETER;
 
@@ -1263,7 +1270,7 @@ error_t ccmEncrypt(const CipherAlgo *cipher, void *context, const uint8_t *n,
    //Format initial counter value CTR(0)
    ccmFormatCounter0(n, nLen, (uint8_t *) block);
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Initialize CCM encryption
@@ -1361,7 +1368,7 @@ error_t ccmEncrypt(const CipherAlgo *cipher, void *context, const uint8_t *n,
       osMemcpy(t, authTag, tLen);
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -1404,7 +1411,7 @@ error_t ccmDecrypt(const CipherAlgo *cipher, void *context, const uint8_t *n,
    uint8_t header[64];
    AesContext *aesContext;
 
-   //The RSIP7 module only supports AES cipher algorithm
+   //The RSIP module only supports AES cipher algorithm
    if(cipher != AES_CIPHER_ALGO)
       return ERROR_INVALID_PARAMETER;
 
@@ -1453,7 +1460,7 @@ error_t ccmDecrypt(const CipherAlgo *cipher, void *context, const uint8_t *n,
    //Format initial counter value CTR(0)
    ccmFormatCounter0(n, nLen, (uint8_t *) block);
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Initialize CCM decryption
@@ -1553,7 +1560,7 @@ error_t ccmDecrypt(const CipherAlgo *cipher, void *context, const uint8_t *n,
       osMemcpy(p, block, length);
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code

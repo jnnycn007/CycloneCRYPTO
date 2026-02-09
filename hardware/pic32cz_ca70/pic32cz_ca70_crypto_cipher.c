@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto_cipher.c
- * @brief PIC32CZ cipher hardware accelerator
+ * @file pic32cz_ca70_crypto_cipher.c
+ * @brief PIC32CZ CA70 cipher hardware accelerator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
@@ -34,15 +34,15 @@
 //Dependencies
 #include "pic32c.h"
 #include "core/crypto.h"
-#include "hardware/pic32cz/pic32cz_crypto.h"
-#include "hardware/pic32cz/pic32cz_crypto_cipher.h"
+#include "hardware/pic32cz_ca70/pic32cz_ca70_crypto.h"
+#include "hardware/pic32cz_ca70/pic32cz_ca70_crypto_cipher.h"
 #include "cipher/cipher_algorithms.h"
 #include "cipher_modes/cipher_modes.h"
 #include "aead/aead_algorithms.h"
 #include "debug.h"
 
 //Check crypto library configuration
-#if (PIC32CZ_CRYPTO_CIPHER_SUPPORT == ENABLED && AES_SUPPORT == ENABLED)
+#if (PIC32CZ_CA70_CRYPTO_CIPHER_SUPPORT == ENABLED && AES_SUPPORT == ENABLED)
 
 
 /**
@@ -150,7 +150,7 @@ void aesProcessData(AesContext *context, uint8_t *iv, const uint8_t *input,
    uint32_t *p;
 
    //Acquire exclusive access to the AES module
-   osAcquireMutex(&pic32czCryptoMutex);
+   osAcquireMutex(&pic32czca70CryptoMutex);
 
    //Perform software reset
    AES_REGS->AES_CR = AES_CR_SWRST_Msk;
@@ -200,7 +200,7 @@ void aesProcessData(AesContext *context, uint8_t *iv, const uint8_t *input,
    }
 
    //Release exclusive access to the AES module
-   osReleaseMutex(&pic32czCryptoMutex);
+   osReleaseMutex(&pic32czca70CryptoMutex);
 }
 
 
@@ -1007,7 +1007,7 @@ void gcmProcessData(AesContext *context, const uint8_t *iv,
    uint8_t buffer[16];
 
    //Acquire exclusive access to the AES module
-   osAcquireMutex(&pic32czCryptoMutex);
+   osAcquireMutex(&pic32czca70CryptoMutex);
 
    //Perform software reset
    AES_REGS->AES_CR = AES_CR_SWRST_Msk;
@@ -1129,7 +1129,7 @@ void gcmProcessData(AesContext *context, const uint8_t *iv,
    }
 
    //Release exclusive access to the AES module
-   osReleaseMutex(&pic32czCryptoMutex);
+   osReleaseMutex(&pic32czca70CryptoMutex);
 }
 
 

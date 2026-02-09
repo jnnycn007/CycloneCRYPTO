@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
@@ -67,7 +67,7 @@ void hashProcessData(uint32_t algo, const uint8_t *data, size_t length,
    //Clear state
    osMemset(state, 0, sizeof(state));
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Restore hash state
@@ -163,7 +163,7 @@ void hashProcessData(uint32_t algo, const uint8_t *data, size_t length,
       h[15] = state[15];
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 }
 

@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
@@ -80,7 +80,7 @@ void curve448Add(int32_t *r, const int32_t *a, const int32_t *b)
    {
       temp += a[i] + b[i];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -92,52 +92,52 @@ void curve448Add(int32_t *r, const int32_t *a, const int32_t *b)
    //Compute R = A + B
    temp = a[0] + b[0];
    r[0] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[1] + b[1];
    r[1] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[2] + b[2];
    r[2] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[3] + b[3];
    r[3] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[4] + b[4];
    r[4] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[5] + b[5];
    r[5] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[6] + b[6];
    r[6] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[7] + b[7];
    r[7] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[8] + b[8];
    r[8] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[9] + b[9];
    r[9] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[10] + b[10];
    r[10] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[11] + b[11];
    r[11] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[12] + b[12];
    r[12] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[13] + b[13];
    r[13] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[14] + b[14];
    r[14] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[15] + b[15];
    r[15] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
 
    //Perform modular reduction (2^448 = 2^224 + 1)
    r[0] += temp;
@@ -163,7 +163,7 @@ void curve448AddInt(int32_t *r, const int32_t *a, int32_t b)
    {
       temp += a[i];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -190,7 +190,7 @@ void curve448Sub(int32_t *r, const int32_t *a, const int32_t *b)
    {
       temp += a[i] - b[i];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -202,52 +202,52 @@ void curve448Sub(int32_t *r, const int32_t *a, const int32_t *b)
    //Compute R = A - B
    temp = a[0] - b[0];
    r[0] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[1] - b[1];
    r[1] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[2] - b[2];
    r[2] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[3] - b[3];
    r[3] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[4] - b[4];
    r[4] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[5] - b[5];
    r[5] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[6] - b[6];
    r[6] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[7] - b[7];
    r[7] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[8] - b[8];
    r[8] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[9] - b[9];
    r[9] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[10] - b[10];
    r[10] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[11] - b[11];
    r[11] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[12] - b[12];
    r[12] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[13] - b[13];
    r[13] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[14] - b[14];
    r[14] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += a[15] - b[15];
    r[15] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
 
    //Perform modular reduction (2^448 = 2^224 + 1)
    r[0] += temp;
@@ -273,7 +273,7 @@ void curve448SubInt(int32_t *r, const int32_t *a, int32_t b)
    {
       temp += a[i];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -320,7 +320,7 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
       //At the bottom of each column, the final result is written to memory
       r[i] = acc & 0x0FFFFFFF;
       //Propagate the carry upwards
-      acc >>= 28;
+      acc = ASR64(acc, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -332,29 +332,29 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
    //Compute R = A * B
    acc = (int64_t) a[0] * b[0];
    r[0] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[1];
    acc += (int64_t) a[1] * b[0];
    r[1] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[2];
    acc += (int64_t) a[1] * b[1];
    acc += (int64_t) a[2] * b[0];
    r[2] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[3];
    acc += (int64_t) a[1] * b[2];
    acc += (int64_t) a[2] * b[1];
    acc += (int64_t) a[3] * b[0];
    r[3] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[4];
    acc += (int64_t) a[1] * b[3];
    acc += (int64_t) a[2] * b[2];
    acc += (int64_t) a[3] * b[1];
    acc += (int64_t) a[4] * b[0];
    r[4] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[5];
    acc += (int64_t) a[1] * b[4];
    acc += (int64_t) a[2] * b[3];
@@ -362,7 +362,7 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
    acc += (int64_t) a[4] * b[1];
    acc += (int64_t) a[5] * b[0];
    r[5] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[6];
    acc += (int64_t) a[1] * b[5];
    acc += (int64_t) a[2] * b[4];
@@ -371,7 +371,7 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
    acc += (int64_t) a[5] * b[1];
    acc += (int64_t) a[6] * b[0];
    r[6] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[0] * b[7];
    acc += (int64_t) a[1] * b[6];
    acc += (int64_t) a[2] * b[5];
@@ -381,7 +381,7 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
    acc += (int64_t) a[6] * b[1];
    acc += (int64_t) a[7] * b[0];
    r[7] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[1] * b[7];
    acc += (int64_t) a[2] * b[6];
    acc += (int64_t) a[3] * b[5];
@@ -390,7 +390,7 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
    acc += (int64_t) a[6] * b[2];
    acc += (int64_t) a[7] * b[1];
    r[8] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[2] * b[7];
    acc += (int64_t) a[3] * b[6];
    acc += (int64_t) a[4] * b[5];
@@ -398,34 +398,34 @@ void curve448Mul224(int32_t *r, const int32_t *a, const int32_t *b)
    acc += (int64_t) a[6] * b[3];
    acc += (int64_t) a[7] * b[2];
    r[9] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[3] * b[7];
    acc += (int64_t) a[4] * b[6];
    acc += (int64_t) a[5] * b[5];
    acc += (int64_t) a[6] * b[4];
    acc += (int64_t) a[7] * b[3];
    r[10] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[4] * b[7];
    acc += (int64_t) a[5] * b[6];
    acc += (int64_t) a[6] * b[5];
    acc += (int64_t) a[7] * b[4];
    r[11] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[5] * b[7];
    acc += (int64_t) a[6] * b[6];
    acc += (int64_t) a[7] * b[5];
    r[12] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[6] * b[7];
    acc += (int64_t) a[7] * b[6];
    r[13] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    acc += (int64_t) a[7] * b[7];
    r[14] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
    r[15] = acc & 0x0FFFFFFF;
-   acc >>= 28;
+   acc = ASR64(acc, 28);
 
    //Perform modular reduction (2^448 = 2^224 + 1)
    r[0] += (int32_t) acc;
@@ -494,9 +494,9 @@ __weak_func void curve448Mul(int32_t *r, const int32_t *a, const int32_t *b)
 
       //The 2 columns are written to memory
       u[i] = (int32_t) acc1 & 0x0FFFFFFF;
-      acc1 >>= 28;
+      acc1 = ASR64(acc1, 28);
       u[i + 8] = (int32_t) acc2 & 0x0FFFFFFF;
-      acc2 >>= 28;
+      acc2 = ASR64(acc2, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -505,11 +505,11 @@ __weak_func void curve448Mul(int32_t *r, const int32_t *a, const int32_t *b)
    //Propagate carries
    acc2 += u[0];
    u[0] = (int32_t) acc2 & 0x0FFFFFFF;
-   acc2 >>= 28;
+   acc2 = ASR64(acc2, 28);
    u[1] += (int32_t) acc2;
    acc1 += u[8];
    u[8] = (int32_t) acc1 & 0x0FFFFFFF;
-   acc1 >>= 28;
+   acc1 = ASR64(acc1, 28);
    u[9] += (int32_t) acc1;
 
    //Copy result
@@ -542,25 +542,25 @@ __weak_func void curve448Mul(int32_t *r, const int32_t *a, const int32_t *b)
    {
       temp += u[i] - u[i + 8] + v[i] + w[i + 8];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    for(i = 0; i < 8; i++)
    {
       temp += -u[i] + v[i + 8] + w[i] + w[i + 8];
       r[i + 8] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
    c = temp;
    temp = r[0] + c;
    r[0] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    r[1] += temp;
    temp = r[8] + c;
    r[8] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    r[9] += temp;
 #else
    int32_t c;
@@ -600,62 +600,62 @@ __weak_func void curve448Mul(int32_t *r, const int32_t *a, const int32_t *b)
    //make the multiplication algorithm more complex
    temp = u[0] - u[8] + v[0] + w[8];
    r[0] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[1] - u[9] + v[1] + w[9];
    r[1] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[2] - u[10] + v[2] + w[10];
    r[2] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[3] - u[11] + v[3] + w[11];
    r[3] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[4] - u[12] + v[4] + w[12];
    r[4] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[5] - u[13] + v[5] + w[13];
    r[5] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[6] - u[14] + v[6] + w[14];
    r[6] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += u[7] - u[15] + v[7] + w[15];
    r[7] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[0] + v[8] + w[0] + w[8];
    r[8] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[1] + v[9] + w[1] + w[9];
    r[9] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[2] + v[10] + w[2] + w[10];
    r[10] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[3] + v[11] + w[3] + w[11];
    r[11] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[4] + v[12] + w[4] + w[12];
    r[12] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[5] + v[13] + w[5] + w[13];
    r[13] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[6] + v[14] + w[6] + w[14];
    r[14] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    temp += -u[7] + v[15] + w[7] + w[15];
    r[15] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
 
    //Perform modular reduction (2^448 = 2^224 + 1)
    c = temp;
    temp = r[0] + c;
    r[0] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    r[1] += temp;
    temp = r[8] + c;
    r[8] = temp & 0x0FFFFFFF;
-   temp >>= 28;
+   temp = ASR32(temp, 28);
    r[9] += temp;
 #endif
 }
@@ -678,7 +678,7 @@ void curve448MulInt(int32_t *r, const int32_t *a, int32_t b)
    {
       temp += (int64_t) a[i] * b;
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR64(temp, 28);
    }
 
    //Perform modular reduction (2^448 = 2^224 + 1)
@@ -869,7 +869,7 @@ void curve448Canonicalize(int32_t *r, const int32_t *a)
    {
       temp += a[i];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Perform modular reduction (second pass)
@@ -877,7 +877,7 @@ void curve448Canonicalize(int32_t *r, const int32_t *a)
    {
       temp += r[i];
       r[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Compute B = A - (2^448 - 2^224 - 1)
@@ -885,14 +885,14 @@ void curve448Canonicalize(int32_t *r, const int32_t *a)
    {
       temp += r[i];
       b[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    for(temp += 1, i = 8; i < 16; i++)
    {
       temp += r[i];
       b[i] = temp & 0x0FFFFFFF;
-      temp >>= 28;
+      temp = ASR32(temp, 28);
    }
 
    //Compute the highest term of the result

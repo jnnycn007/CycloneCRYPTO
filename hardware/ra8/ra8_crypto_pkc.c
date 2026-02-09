@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
@@ -103,7 +103,7 @@ error_t mpiExpModFast(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
          command = SCE_OEM_CMD_RSA4096_PUBLIC;
       }
 
-      //Acquire exclusive access to the RSIP7 module
+      //Acquire exclusive access to the RSIP module
       osAcquireMutex(&ra8CryptoMutex);
 
       //Format message representative
@@ -113,6 +113,36 @@ error_t mpiExpModFast(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
       mpiWriteRaw(p, (uint8_t *) rsaArgs.key, pLen);
       mpiWriteRaw(e, (uint8_t *) rsaArgs.key + pLen, 4);
 
+#if (BSP_FEATURE_RSIP_RSIP_E51A_SUPPORTED == 1)
+      //Just for sanity
+      (void) command;
+
+      //Perform RSA encryption
+      if(pLen == 128)
+      {
+         status = HW_SCE_Rsa1024ModularExponentEncryptSub(rsaArgs.key,
+            rsaArgs.m, rsaArgs.c);
+      }
+      else if(pLen == 256)
+      {
+         status = HW_SCE_Rsa2048ModularExponentEncryptSub(rsaArgs.key,
+            rsaArgs.m, rsaArgs.c);
+      }
+      else if(pLen == 384)
+      {
+         status = HW_SCE_Rsa3072ModularExponentEncryptSub(rsaArgs.key,
+            rsaArgs.m, rsaArgs.c);
+      }
+      else if(pLen == 512)
+      {
+         status = HW_SCE_Rsa4096ModularExponentEncryptSub(rsaArgs.key,
+            rsaArgs.m, rsaArgs.c);
+      }
+      else
+      {
+         status = FSP_ERR_CRYPTO_NOT_IMPLEMENTED;
+      }
+#else
       //Install the plaintext public key and get the wrapped key
       status = HW_SCE_GenerateOemKeyIndexPrivate(SCE_OEM_KEY_TYPE_PLAIN,
          command, NULL, NULL, (uint8_t *) rsaArgs.key, rsaArgs.wrappedKey);
@@ -146,6 +176,7 @@ error_t mpiExpModFast(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
             status = FSP_ERR_CRYPTO_NOT_IMPLEMENTED;
          }
       }
+#endif
 
       //Check status code
       if(status == FSP_SUCCESS)
@@ -159,7 +190,7 @@ error_t mpiExpModFast(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
          error = ERROR_FAILURE;
       }
 
-      //Release exclusive access to the RSIP7 module
+      //Release exclusive access to the RSIP module
       osReleaseMutex(&ra8CryptoMutex);
    }
    else
@@ -189,6 +220,8 @@ error_t mpiExpModRegular(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
    size_t aLen;
    size_t eLen;
    size_t pLen;
+   uint32_t keyType;
+   uint32_t dummy;
    sce_oem_cmd_t command;
 
    //Get the length of the integer, in bytes
@@ -222,7 +255,12 @@ error_t mpiExpModRegular(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
          command = SCE_OEM_CMD_RSA4096_PRIVATE;
       }
 
-      //Acquire exclusive access to the RSIP7 module
+      //Set key type
+      keyType = 0;
+      //Dummy parameter
+      dummy = 0;
+
+      //Acquire exclusive access to the RSIP module
       osAcquireMutex(&ra8CryptoMutex);
 
       //Format ciphertext representative
@@ -242,23 +280,23 @@ error_t mpiExpModRegular(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
          //Perform RSA decryption
          if(pLen == 128)
          {
-            status = HW_SCE_Rsa1024ModularExponentDecryptSub(rsaArgs.wrappedKey,
-               rsaArgs.c, rsaArgs.m);
+            status = HW_SCE_Rsa1024ModularExponentDecryptSub(&keyType,
+               rsaArgs.wrappedKey, &dummy, rsaArgs.c, rsaArgs.m);
          }
          else if(pLen == 256)
          {
-            status = HW_SCE_Rsa2048ModularExponentDecryptSub(rsaArgs.wrappedKey,
-               rsaArgs.c, rsaArgs.m);
+            status = HW_SCE_Rsa2048ModularExponentDecryptSub(&keyType,
+               rsaArgs.wrappedKey, &dummy, rsaArgs.c, rsaArgs.m);
          }
          else if(pLen == 384)
          {
-            status = HW_SCE_Rsa3072ModularExponentDecryptSub(rsaArgs.wrappedKey,
-               rsaArgs.c, rsaArgs.m);
+            status = HW_SCE_Rsa3072ModularExponentDecryptSub(&keyType,
+               rsaArgs.wrappedKey, &dummy, rsaArgs.c, rsaArgs.m);
          }
          else if(pLen == 512)
          {
-            status = HW_SCE_Rsa4096ModularExponentDecryptSub(rsaArgs.wrappedKey,
-               rsaArgs.c, rsaArgs.m);
+            status = HW_SCE_Rsa4096ModularExponentDecryptSub(&keyType,
+               rsaArgs.wrappedKey, &dummy, rsaArgs.c, rsaArgs.m);
          }
          else
          {
@@ -278,7 +316,7 @@ error_t mpiExpModRegular(Mpi *r, const Mpi *a, const Mpi *e, const Mpi *p)
          error = ERROR_FAILURE;
       }
 
-      //Release exclusive access to the RSIP7 module
+      //Release exclusive access to the RSIP module
       osReleaseMutex(&ra8CryptoMutex);
    }
    else
@@ -453,6 +491,8 @@ error_t ecMulRegular(const EcCurve *curve, EcPoint3 *r, const uint32_t *d,
    size_t orderLen;
    uint32_t curveType;
    uint32_t command;
+   uint32_t keyType;
+   uint32_t dummy;
    sce_oem_cmd_t oemCommand;
    const uint32_t *domainParams;
 
@@ -527,7 +567,12 @@ error_t ecMulRegular(const EcCurve *curve, EcPoint3 *r, const uint32_t *d,
       return ERROR_FAILURE;
    }
 
-   //Acquire exclusive access to the RSIP7 module
+   //Set key type
+   keyType = 0;
+   //Dummy parameter
+   dummy = 0;
+
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Set scalar value
@@ -551,23 +596,24 @@ error_t ecMulRegular(const EcCurve *curve, EcPoint3 *r, const uint32_t *d,
       //Perform scalar multiplication
       if(curve->fieldSize == 256)
       {
-         status = HW_SCE_Ecc256ScalarMultiplicationSub(&curveType,
-            &command, ecArgs.wrappedKey, ecArgs.g, domainParams, ecArgs.q);
+         status = HW_SCE_Ecc256ScalarMultiplicationSub(&curveType, &command,
+            &keyType, ecArgs.wrappedKey, &dummy, ecArgs.g, domainParams,
+            ecArgs.q);
       }
       else if(curve->fieldSize == 384)
       {
-         status = HW_SCE_Ecc384ScalarMultiplicationSub(&curveType,
-            ecArgs.wrappedKey, ecArgs.g, domainParams, ecArgs.q);
+         status = HW_SCE_Ecc384ScalarMultiplicationSub(&curveType, &keyType,
+            ecArgs.wrappedKey, &dummy, ecArgs.g, domainParams, ecArgs.q);
       }
       else if(curve->fieldSize == 512)
       {
-         status = HW_SCE_Ecc512ScalarMultiplicationSub(ecArgs.wrappedKey,
-            ecArgs.g, domainParams, ecArgs.q);
+         status = HW_SCE_Ecc512ScalarMultiplicationSub(&keyType,
+            ecArgs.wrappedKey, &dummy, ecArgs.g, domainParams, ecArgs.q);
       }
       else if(curve->fieldSize == 521)
       {
-         status = HW_SCE_Ecc521ScalarMultiplicationSub(ecArgs.wrappedKey,
-            ecArgs.g, domainParams, ecArgs.q);
+         status = HW_SCE_Ecc521ScalarMultiplicationSub(&keyType,
+            ecArgs.wrappedKey, &dummy, ecArgs.g, domainParams, ecArgs.q);
       }
       else
       {
@@ -605,7 +651,7 @@ error_t ecMulRegular(const EcCurve *curve, EcPoint3 *r, const uint32_t *d,
       error = ERROR_FAILURE;
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -637,6 +683,8 @@ error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo, void *prngContext,
    size_t orderLen;
    uint32_t curveType;
    uint32_t command;
+   uint32_t keyType;
+   uint32_t dummy;
    sce_oem_cmd_t oemCommand;
    const uint32_t *domainParams;
    const EcCurve *curve;
@@ -721,10 +769,15 @@ error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo, void *prngContext,
       return ERROR_FAILURE;
    }
 
+   //Set key type
+   keyType = 0;
+   //Dummy parameter
+   dummy = 0;
+
    //Keep the leftmost bits of the hash value
    digestLen = MIN(digestLen, (curve->orderSize + 7) / 8);
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Pad the digest with leading zeroes if necessary
@@ -746,22 +799,26 @@ error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo, void *prngContext,
       if(curve->fieldSize == 256)
       {
          status = HW_SCE_EcdsaSignatureGenerateSub(&curveType, &command,
-            ecArgs.wrappedKey, ecArgs.digest, domainParams, ecArgs.signature);
+            &keyType, ecArgs.wrappedKey, &dummy, ecArgs.digest, domainParams,
+            ecArgs.signature);
       }
       else if(curve->fieldSize == 384)
       {
-         status = HW_SCE_EcdsaP384SignatureGenerateSub(&curveType,
-            ecArgs.wrappedKey, ecArgs.digest, domainParams, ecArgs.signature);
+         status = HW_SCE_EcdsaP384SignatureGenerateSub(&curveType, &keyType,
+            ecArgs.wrappedKey, &dummy, ecArgs.digest, domainParams,
+            ecArgs.signature);
       }
       else if(curve->fieldSize == 512)
       {
-         status = HW_SCE_EcdsaP512SignatureGenerateSub(ecArgs.wrappedKey,
-            ecArgs.digest, domainParams, ecArgs.signature);
+         status = HW_SCE_EcdsaP512SignatureGenerateSub(&keyType,
+            ecArgs.wrappedKey, &dummy, ecArgs.digest, domainParams,
+            ecArgs.signature);
       }
       else if(curve->fieldSize == 521)
       {
-         status = HW_SCE_EcdsaP521SignatureGenerateSub(ecArgs.wrappedKey,
-            ecArgs.digest, domainParams, ecArgs.signature);
+         status = HW_SCE_EcdsaP521SignatureGenerateSub(&keyType,
+            ecArgs.wrappedKey, &dummy, ecArgs.digest, domainParams,
+            ecArgs.signature);
       }
       else
       {
@@ -795,7 +852,7 @@ error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo, void *prngContext,
       error = ERROR_FAILURE;
    }
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code
@@ -925,7 +982,7 @@ error_t ecdsaVerifySignature(const EcPublicKey *publicKey,
    //Keep the leftmost bits of the hash value
    digestLen = MIN(digestLen, (curve->orderSize + 7) / 8);
 
-   //Acquire exclusive access to the RSIP7 module
+   //Acquire exclusive access to the RSIP module
    osAcquireMutex(&ra8CryptoMutex);
 
    //Pad the digest with leading zeroes if necessary
@@ -946,6 +1003,36 @@ error_t ecdsaVerifySignature(const EcPublicKey *publicKey,
    ecScalarExport(signature->s, orderLen, (uint8_t *) ecArgs.signature + n,
       n, EC_SCALAR_FORMAT_BIG_ENDIAN);
 
+#if (BSP_FEATURE_RSIP_RSIP_E51A_SUPPORTED == 1)
+   //Just for sanity
+   (void) oemCommand;
+
+   //Verify ECDSA signature
+   if(curve->fieldSize == 256)
+   {
+      status = HW_SCE_EcdsaSignatureVerificationSub(&curveType, &command,
+         ecArgs.q, ecArgs.digest, ecArgs.signature, domainParams);
+   }
+   else if(curve->fieldSize == 384)
+   {
+      status = HW_SCE_EcdsaP384SignatureVerificationSub(&curveType, ecArgs.q,
+         ecArgs.digest, ecArgs.signature, domainParams);
+   }
+   else if(curve->fieldSize == 512)
+   {
+      status = HW_SCE_EcdsaP512SignatureVerificationSub(ecArgs.q,
+         ecArgs.digest, ecArgs.signature, domainParams);
+   }
+   else if(curve->fieldSize == 521)
+   {
+      status = HW_SCE_EcdsaP521SignatureVerificationSub(ecArgs.q,
+         ecArgs.digest, ecArgs.signature, domainParams);
+   }
+   else
+   {
+      status = FSP_ERR_CRYPTO_NOT_IMPLEMENTED;
+   }
+#else
    //Install the plaintext public key and get the wrapped key
    status = HW_SCE_GenerateOemKeyIndexPrivate(SCE_OEM_KEY_TYPE_PLAIN,
       oemCommand, NULL, NULL, (uint8_t *) ecArgs.q, ecArgs.wrappedKey);
@@ -979,8 +1066,9 @@ error_t ecdsaVerifySignature(const EcPublicKey *publicKey,
          status = FSP_ERR_CRYPTO_NOT_IMPLEMENTED;
       }
    }
+#endif
 
-   //Release exclusive access to the RSIP7 module
+   //Release exclusive access to the RSIP module
    osReleaseMutex(&ra8CryptoMutex);
 
    //Return status code

@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 #ifndef _CRYPTO_H
@@ -66,13 +66,13 @@
 #endif
 
 //Version string
-#define CYCLONE_CRYPTO_VERSION_STRING "2.5.4"
+#define CYCLONE_CRYPTO_VERSION_STRING "2.6.0"
 //Major version
 #define CYCLONE_CRYPTO_MAJOR_VERSION 2
 //Minor version
-#define CYCLONE_CRYPTO_MINOR_VERSION 5
+#define CYCLONE_CRYPTO_MINOR_VERSION 6
 //Revision number
-#define CYCLONE_CRYPTO_REV_NUMBER 4
+#define CYCLONE_CRYPTO_REV_NUMBER 0
 
 //Static memory allocation
 #ifndef CRYPTO_STATIC_MEM_SUPPORT
@@ -861,29 +861,56 @@
    #define cryptoFreeMem(p) osFreeMem(p)
 #endif
 
-//Rotate left operation
-#define ROL8(a, n) (((a) << (n)) | ((a) >> (8 - (n))))
-#define ROL16(a, n) (((a) << (n)) | ((a) >> (16 - (n))))
-#define ROL32(a, n) (((a) << (n)) | ((a) >> (32 - (n))))
-#define ROL64(a, n) (((a) << (n)) | ((a) >> (64 - (n))))
+//Rotate left operations
+#ifndef ROL8
+   #define ROL8(a, n) (((a) << (n)) | ((a) >> (8 - (n))))
+#endif
 
-//Rotate right operation
-#define ROR8(a, n) (((a) >> (n)) | ((a) << (8 - (n))))
-#define ROR16(a, n) (((a) >> (n)) | ((a) << (16 - (n))))
-#define ROR32(a, n) (((a) >> (n)) | ((a) << (32 - (n))))
-#define ROR64(a, n) (((a) >> (n)) | ((a) << (64 - (n))))
+#ifndef ROL16
+   #define ROL16(a, n) (((a) << (n)) | ((a) >> (16 - (n))))
+#endif
 
-//Shift left operation
-#define SHL8(a, n) ((a) << (n))
-#define SHL16(a, n) ((a) << (n))
-#define SHL32(a, n) ((a) << (n))
-#define SHL64(a, n) ((a) << (n))
+#ifndef ROL32
+   #define ROL32(a, n) (((a) << (n)) | ((a) >> (32 - (n))))
+#endif
 
-//Shift right operation
-#define SHR8(a, n) ((a) >> (n))
-#define SHR16(a, n) ((a) >> (n))
-#define SHR32(a, n) ((a) >> (n))
-#define SHR64(a, n) ((a) >> (n))
+#ifndef ROL64
+   #define ROL64(a, n) (((a) << (n)) | ((a) >> (64 - (n))))
+#endif
+
+//Rotate right operations
+#ifndef ROR8
+   #define ROR8(a, n) (((a) >> (n)) | ((a) << (8 - (n))))
+#endif
+
+#ifndef ROR16
+   #define ROR16(a, n) (((a) >> (n)) | ((a) << (16 - (n))))
+#endif
+
+#ifndef ROR32
+   #define ROR32(a, n) (((a) >> (n)) | ((a) << (32 - (n))))
+#endif
+
+#ifndef ROR64
+   #define ROR64(a, n) (((a) >> (n)) | ((a) << (64 - (n))))
+#endif
+
+//Arithmetic shift right operations
+#ifndef ASR8
+   #define ASR8(a, n) ((a) >> (n))
+#endif
+
+#ifndef ASR16
+   #define ASR16(a, n) ((a) >> (n))
+#endif
+
+#ifndef ASR32
+   #define ASR32(a, n) ((a) >> (n))
+#endif
+
+#ifndef ASR64
+   #define ASR64(a, n) ((a) >> (n))
+#endif
 
 //Micellaneous macros
 #define _U8(x) ((uint8_t) (x))

@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto_hash.h
- * @brief PIC32CZ hash hardware accelerator
+ * @file pic32cz_ca70_crypto_hash.h
+ * @brief PIC32CZ CA70 hash hardware accelerator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,32 +25,32 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
-#ifndef _PIC32CZ_CRYPTO_HASH_H
-#define _PIC32CZ_CRYPTO_HASH_H
+#ifndef _PIC32CZ_CA70_CRYPTO_HASH_H
+#define _PIC32CZ_CA70_CRYPTO_HASH_H
 
 //Dependencies
 #include "core/crypto.h"
 
 //Hash hardware accelerator
-#ifndef PIC32CZ_CRYPTO_HASH_SUPPORT
-   #define PIC32CZ_CRYPTO_HASH_SUPPORT DISABLED
-#elif (PIC32CZ_CRYPTO_HASH_SUPPORT != ENABLED && PIC32CZ_CRYPTO_HASH_SUPPORT != DISABLED)
-   #error PIC32CZ_CRYPTO_HASH_SUPPORT parameter is not valid
+#ifndef PIC32CZ_CA70_CRYPTO_HASH_SUPPORT
+   #define PIC32CZ_CA70_CRYPTO_HASH_SUPPORT DISABLED
+#elif (PIC32CZ_CA70_CRYPTO_HASH_SUPPORT != ENABLED && PIC32CZ_CA70_CRYPTO_HASH_SUPPORT != DISABLED)
+   #error PIC32CZ_CA70_CRYPTO_HASH_SUPPORT parameter is not valid
 #endif
 
 //Data buffer size
-#ifndef PIC32CZ_ICM_BUFFER_SIZE
-   #define PIC32CZ_ICM_BUFFER_SIZE 1024
-#elif (PIC32CZ_ICM_BUFFER_SIZE < 64)
-   #error PIC32CZ_ICM_BUFFER_SIZE parameter is not valid
+#ifndef PIC32CZ_CA70_ICM_BUFFER_SIZE
+   #define PIC32CZ_CA70_ICM_BUFFER_SIZE 1024
+#elif (PIC32CZ_CA70_ICM_BUFFER_SIZE < 64)
+   #error PIC32CZ_CA70_ICM_BUFFER_SIZE parameter is not valid
 #endif
 
 //Name of the section where to place DMA buffers
-#ifndef PIC32CZ_ICM_RAM_SECTION
-   #define PIC32CZ_ICM_RAM_SECTION ".ram_no_cache"
+#ifndef PIC32CZ_CA70_ICM_RAM_SECTION
+   #define PIC32CZ_CA70_ICM_RAM_SECTION ".ram_no_cache"
 #endif
 
 //Hash algorithm identifiers

@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto_hash.c
- * @brief PIC32CZ hash hardware accelerator
+ * @file pic32cz_ca70_crypto_hash.c
+ * @brief PIC32CZ CA70 hash hardware accelerator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,7 +25,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
@@ -34,28 +34,28 @@
 //Dependencies
 #include "pic32c.h"
 #include "core/crypto.h"
-#include "hardware/pic32cz/pic32cz_crypto.h"
-#include "hardware/pic32cz/pic32cz_crypto_hash.h"
+#include "hardware/pic32cz_ca70/pic32cz_ca70_crypto.h"
+#include "hardware/pic32cz_ca70/pic32cz_ca70_crypto_hash.h"
 #include "hash/hash_algorithms.h"
 #include "debug.h"
 
 //Check crypto library configuration
-#if (PIC32CZ_CRYPTO_HASH_SUPPORT == ENABLED)
+#if (PIC32CZ_CA70_CRYPTO_HASH_SUPPORT == ENABLED)
 
 //IAR EWARM compiler?
 #if defined(__ICCARM__)
 
 //ICM region descriptor
 #pragma data_alignment = 64
-#pragma location = PIC32CZ_ICM_RAM_SECTION
+#pragma location = PIC32CZ_CA70_ICM_RAM_SECTION
 static Pic32czIcmDesc icmDesc;
 //ICM data buffer
 #pragma data_alignment = 4
-#pragma location = PIC32CZ_ICM_RAM_SECTION
-static uint8_t icmBuffer[PIC32CZ_ICM_BUFFER_SIZE];
+#pragma location = PIC32CZ_CA70_ICM_RAM_SECTION
+static uint8_t icmBuffer[PIC32CZ_CA70_ICM_BUFFER_SIZE];
 //ICM hash area
 #pragma data_alignment = 128
-#pragma location = PIC32CZ_ICM_RAM_SECTION
+#pragma location = PIC32CZ_CA70_ICM_RAM_SECTION
 static uint32_t icmHash[8];
 
 //Keil MDK-ARM or GCC compiler?
@@ -63,13 +63,13 @@ static uint32_t icmHash[8];
 
 //ICM region descriptor
 static Pic32czIcmDesc icmDesc
-   __attribute__((aligned(64), __section__(PIC32CZ_ICM_RAM_SECTION)));
+   __attribute__((aligned(64), __section__(PIC32CZ_CA70_ICM_RAM_SECTION)));
 //ICM data buffer
-static uint8_t icmBuffer[PIC32CZ_ICM_BUFFER_SIZE]
-   __attribute__((aligned(4), __section__(PIC32CZ_ICM_RAM_SECTION)));
+static uint8_t icmBuffer[PIC32CZ_CA70_ICM_BUFFER_SIZE]
+   __attribute__((aligned(4), __section__(PIC32CZ_CA70_ICM_RAM_SECTION)));
 //ICM hash area
 static uint32_t icmHash[8]
-   __attribute__((aligned(128), __section__(PIC32CZ_ICM_RAM_SECTION)));
+   __attribute__((aligned(128), __section__(PIC32CZ_CA70_ICM_RAM_SECTION)));
 
 #endif
 
@@ -97,13 +97,13 @@ void hashProcessData(uint32_t algo, const uint8_t *data, size_t length,
    size_t n;
 
    //Acquire exclusive access to the ICM module
-   osAcquireMutex(&pic32czCryptoMutex);
+   osAcquireMutex(&pic32czca70CryptoMutex);
 
    //Digest input data
    while(length >= 64)
    {
       //Limit the number of data to process at a time
-      n = MIN(length, PIC32CZ_ICM_BUFFER_SIZE);
+      n = MIN(length, PIC32CZ_CA70_ICM_BUFFER_SIZE);
 
       //Copy input data
       osMemcpy(icmBuffer, data, (n + 3) & ~3UL);
@@ -179,7 +179,7 @@ void hashProcessData(uint32_t algo, const uint8_t *data, size_t length,
    }
 
    //Release exclusive access to the ICM module
-   osReleaseMutex(&pic32czCryptoMutex);
+   osReleaseMutex(&pic32czca70CryptoMutex);
 }
 
 

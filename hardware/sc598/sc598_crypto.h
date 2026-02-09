@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto.h
- * @brief PIC32CZ hardware cryptographic accelerator
+ * @file sc598_crypto.h
+ * @brief ADSP-SC598 hardware cryptographic accelerator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,11 +25,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
-#ifndef _PIC32CZ_CRYPTO_H
-#define _PIC32CZ_CRYPTO_H
+#ifndef _SC598_CRYPTO_H
+#define _SC598_CRYPTO_H
 
 //Dependencies
 #include "core/crypto.h"
@@ -40,10 +40,10 @@ extern "C" {
 #endif
 
 //Global variables
-extern OsMutex pic32czCryptoMutex;
+extern OsMutex sc598CryptoMutex;
 
-//PIC32CZ hardware cryptographic accelerator related functions
-error_t pic32czCryptoInit(void);
+//ADSP-SC598 hardware cryptographic accelerator related functions
+error_t sc598CryptoInit(void);
 
 //C++ guard
 #ifdef __cplusplus

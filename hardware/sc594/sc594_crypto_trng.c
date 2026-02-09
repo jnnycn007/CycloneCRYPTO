@@ -1,12 +1,12 @@
 /**
- * @file pic32cz_crypto_trng.c
- * @brief PIC32CZ true random number generator
+ * @file sc594_crypto_trng.c
+ * @brief ADSP-SC594 true random number generator
  *
  * @section License
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * Copyright (C) 2010-2025 Oryx Embedded SARL. All rights reserved.
+ * Copyright (C) 2010-2026 Oryx Embedded SARL. All rights reserved.
  *
  * This file is part of CycloneCRYPTO Open.
  *
@@ -25,21 +25,27 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * @author Oryx Embedded SARL (www.oryx-embedded.com)
- * @version 2.5.4
+ * @version 2.6.0
  **/
 
 //Switch to the appropriate trace level
 #define TRACE_LEVEL CRYPTO_TRACE_LEVEL
 
 //Dependencies
-#include "pic32c.h"
+#include <sys/platform.h>
+#include <sys/adi_core.h>
+#include <drivers/crypto/adi_trng.h>
 #include "core/crypto.h"
-#include "hardware/pic32cz/pic32cz_crypto.h"
-#include "hardware/pic32cz/pic32cz_crypto_trng.h"
+#include "hardware/sc594/sc594_crypto.h"
+#include "hardware/sc594/sc594_crypto_trng.h"
 #include "debug.h"
 
 //Check crypto library configuration
-#if (PIC32CZ_CRYPTO_TRNG_SUPPORT == ENABLED)
+#if (SC594_CRYPTO_TRNG_SUPPORT == ENABLED)
+
+//Global variables
+static uint8_t trngMemory[ADI_TRNG_MEMORY_SIZE];
+static ADI_TRNG_HANDLE trngHandle;
 
 
 /**
@@ -49,21 +55,13 @@
 
 error_t trngInit(void)
 {
-#if defined(__PIC32CZ2051CA70064__) || defined(__PIC32CZ2051CA70100__) || \
-   defined(__PIC32CZ2051CA70144__)
-   //Enable TRNG peripheral clock
-   PMC_REGS->PMC_PCER1 = (1U << (ID_TRNG - 32));
-   //Enable TRNG
-   TRNG_REGS->TRNG_CR = TRNG_CR_KEY_PASSWD | TRNG_CR_ENABLE_Msk;
-#else
-   //Enable TRNG bus clock (CLK_TRNG_APB)
-   MCLK_REGS->MCLK_CLKMSK[TRNG_MCLK_ID_APB / 32]  |= (1U << (TRNG_MCLK_ID_APB % 32));
-   //Enable TRNG
-   TRNG_REGS->TRNG_CTRLA |= TRNG_CTRLA_ENABLE_Msk;
-#endif
+   ADI_TRNG_RESULT res;
 
-   //Successful initialization
-   return NO_ERROR;
+   //Initialize TRNG peripheral
+   res = adi_TRNG_Open(&trngHandle, trngMemory, sizeof(trngMemory));
+
+   //Return status code
+   return (res == ADI_TRNG_SUCCESS) ? NO_ERROR : ERROR_FAILURE;
 }
 
 
@@ -77,12 +75,13 @@ error_t trngGetRandomData(uint8_t *data, size_t length)
 {
    size_t i;
    uint32_t value;
+   ADI_TRNG_RESULT res;
 
-   //Initialize variable
-   value = 0;
+   //Initialize status code
+   res = ADI_TRNG_SUCCESS;
 
    //Acquire exclusive access to the TRNG module
-   osAcquireMutex(&pic32czCryptoMutex);
+   osAcquireMutex(&sc594CryptoMutex);
 
    //Generate random data
    for(i = 0; i < length; i++)
@@ -90,24 +89,13 @@ error_t trngGetRandomData(uint8_t *data, size_t length)
       //Generate a new 32-bit random value when necessary
       if((i % 4) == 0)
       {
-#if defined(__PIC32CZ2051CA70064__) || defined(__PIC32CZ2051CA70100__) || \
-   defined(__PIC32CZ2051CA70144__)
-         //Wait for the TRNG to contain a valid data
-         while((TRNG_REGS->TRNG_ISR & TRNG_ISR_DATRDY_Msk) == 0)
+         //Get 32-bit random value
+         res = adi_TRNG_Read_Output(trngHandle, &value, ADI_TRNG_32_BITS);
+         //Check status code
+         if(res != ADI_TRNG_SUCCESS)
          {
+            break;
          }
-
-         //Get the 32-bit random value
-         value = TRNG_REGS->TRNG_ODATA;
-#else
-         //Wait for the TRNG to contain a valid data
-         while((TRNG_REGS->TRNG_INTFLAG & TRNG_INTFLAG_DATARDY_Msk) == 0)
-         {
-         }
-
-         //Get the 32-bit random value
-         value = TRNG_REGS->TRNG_DATA;
-#endif
       }
 
       //Copy random byte
@@ -117,10 +105,10 @@ error_t trngGetRandomData(uint8_t *data, size_t length)
    }
 
    //Release exclusive access to the TRNG module
-   osReleaseMutex(&pic32czCryptoMutex);
+   osReleaseMutex(&sc594CryptoMutex);
 
-   //Successful processing
-   return NO_ERROR;
+   //Return status code
+   return (res == ADI_TRNG_SUCCESS) ? NO_ERROR : ERROR_FAILURE;
 }
 
 #endif
