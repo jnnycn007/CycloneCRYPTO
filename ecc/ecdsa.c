@@ -659,7 +659,6 @@ __weak_func error_t ecdsaGenerateSignature(const PrngAlgo *prngAlgo,
  * @param[in] privateKey Signer's EC private key
  * @param[in] hashAlgo Underlying hash function
  * @param[in] digest Digest of the message to be signed
- * @param[in] digestLen Length in octets of the digest
  * @param[out] signature (R, S) integer pair
  * @return Error code
  **/
